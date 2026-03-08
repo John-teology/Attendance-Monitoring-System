@@ -1,0 +1,42 @@
+# Global
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Android
+Application Android/build/
+Application Android/.gradle/
+Application Android/local.properties
+Application Android/captures/
+Application Android/.cxx/
+Application Android/app/release/
+Application Android/app/build/
+
+# Backend Runtime/Binaries (Keep Source only)
+New Backend Server/php/
+New Backend Server/webcache/
+New Backend Server/locales/
+New Backend Server/KioskBuild/
+New Backend Server/*.dll
+New Backend Server/*.pak
+New Backend Server/*.exe
+New Backend Server/*.bin
+New Backend Server/*.dat
+New Backend Server/debug.log
+New Backend Server/composer.phar
+
+# Laravel (Specific overrides/additions to the inner gitignore)
+New Backend Server/www/vendor/
+New Backend Server/www/node_modules/
+New Backend Server/www/public/hot/
+New Backend Server/www/public/storage
+New Backend Server/www/storage/*.key
+New Backend Server/www/.env
+New Backend Server/www/database/*.sqlite
+New Backend Server/www/database/*.sqlite-journal

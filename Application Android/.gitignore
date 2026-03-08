@@ -1,0 +1,16 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/app/build
+/captures
+/desktop
+.externalNativeBuild
+.cxx
+node_modules/
+desktop/node_modules/
+dist/
+build/
+*.exe

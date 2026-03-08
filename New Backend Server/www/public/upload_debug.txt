@@ -1,0 +1,4 @@
+--- Update Branding Request 2026-01-09 01:12:57 ---
+Has File (Laravel): No
+$_FILES: {"school_logo":{"name":"Untitled design (2).png","full_path":"Untitled design (2).png","type":"","tmp_name":"","error":1,"size":0}}
+Error caught: The file is too large (exceeds server limit). Please upload a smaller image (under 2MB).
