@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Attendance - Library System</title>
+    <link rel="stylesheet" href="http://192.168.11.143:8001/css/poppins.css">
+    <link rel="stylesheet" href="http://192.168.11.143:8001/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://192.168.11.143:8001/css/local-select2.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="http://192.168.11.143:8001/css/all.min.css">
+    <link rel="stylesheet" href="http://192.168.11.143:8001/css/fa-compat.css">
+    
+    <script src="http://192.168.11.143:8001/js/jquery-3.7.1.min.js"></script>
+    <script src="http://192.168.11.143:8001/js/bootstrap-compat.js"></script>
+    <script src="http://192.168.11.143:8001/js/local-select2.js"></script>
+
+    <script src="http://192.168.11.143:8001/js/resize-observer.js"></script>
+    <script src="http://192.168.11.143:8001/js/apexcharts.js"></script>
+    <style>
+        html { overflow-y: auto; }
+        :root {
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #2c3e50;
+            --primary-color: #800000;
+            --accent-color: #ffc107;
+            --bg-color: #f3f4f6;
+            --text-color: #334155;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-item {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: rgba(255,255,255,0.05);
+            color: #fff;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .sidebar-link i {
+            width: 25px;
+            margin-right: 10px;
+        }
+
+        .user-profile {
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 0;
+            transition: all 0.3s;
+        }
+
+        /* Top Header */
+        .top-header {
+            background-color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 35px;
+            margin-right: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-icon {
+            color: #64748b;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .badge-notification {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.65rem;
+            padding: 2px 5px;
+        }
+
+        .page-content {
+            padding: 30px;
+        }
+        
+        /* Unified page action bar styling */
+        .page-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+        .page-actions .btn {
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin: 4px 6px 4px 0;
+        }
+        .page-actions .btn-group .btn {
+            margin-right: 6px;
+        }
+        .page-actions .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #6a0000;
+            border-color: #6a0000;
+        }
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:focus {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        .bg-primary {
+            --bs-bg-opacity: 1;
+            background-color: rgba(128,0,0,var(--bs-bg-opacity)) !important;
+        }
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+        .badge.bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        .role-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            margin-right: 12px;
+        }
+        .role-super { background: #dc3545; }
+        .role-admin { background: #0d6efd; }
+        .role-editor { background: #ffc107; color: #111; }
+        .role-viewer { background: #6c757d; }
+        .page-content h1,
+        .page-content h2,
+        .page-content h3,
+        .page-content h4,
+        .page-content h5 {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header justify-content-between">
+            <a href="#" class="sidebar-brand d-flex align-items-center">
+                                    <img src="http://192.168.11.143:8001/storage/branding/logo.png" alt="Logo" style="width: 30px; height: 30px; margin-right: 10px; object-fit: contain;">
+                                <span style="font-size: 0.9rem; line-height: 1.2;">Library Attendance</span>
+            </a>
+            <button class="btn btn-link text-white d-md-none" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+                        <li class="sidebar-item">
+                <a href="http://192.168.11.143:8001/admin/dashboard" class="sidebar-link ">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a>
+            </li>
+            
+                        <li class="sidebar-item">
+                <a href="http://192.168.11.143:8001/admin/users" class="sidebar-link ">
+                    <i class="fas fa-users"></i> Student & Faculty Management
+                </a>
+            </li>
+            
+                        <li class="sidebar-item">
+                <a href="http://192.168.11.143:8001/admin/data-management" class="sidebar-link ">
+                    <i class="fas fa-database"></i> Data Management
+                </a>
+            </li>
+            
+                        <li class="sidebar-item">
+                <a href="http://192.168.11.143:8001/admin/reports" class="sidebar-link ">
+                    <i class="fas fa-file-alt"></i> Reports
+                </a>
+            </li>
+            
+                        <li class="sidebar-item">
+                <a href="http://192.168.11.143:8001/admin/settings" class="sidebar-link active">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
+                        <li class="sidebar-item mt-auto">
+                <form action="http://192.168.11.143:8001/logout" method="POST" id="logout-form">
+                    <input type="hidden" name="_token" value="GQmoYGuzJRL6yZg0A2c4WA4XUHhMYIZKBWE41mAf" autocomplete="off">                    <a href="#" class="sidebar-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </form>
+            </li>
+        </ul>
+
+        <div class="user-profile">
+                        <div class="role-avatar role-admin"><i class="fas fa-user-shield"></i></div>
+            <div class="d-flex flex-column">
+                <span class="text-white small fw-bold">Admin User</span>
+                <span class="text-muted small" style="font-size: 0.75rem;">Admin</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <button class="btn btn-link text-dark me-3 d-md-none p-0" id="sidebar-toggle">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+                <!-- Logo moved to sidebar, just title or breadcrumb here if needed, or empty -->
+                <span class="text-muted small d-none d-sm-inline">Library Management System - Library Attendance</span>
+                <span class="text-muted small d-inline d-sm-none">Library System</span>
+            </div>
+            <div class="header-actions">
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="page-content" id="spa-content">
+                                    
+            <div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="fw-bold mb-0">Admin Settings</h2>
+        <p class="text-muted">Manage system administrators and access roles.</p>
+    </div>
+</div>
+
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white pt-4 px-4">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-database me-2 text-primary"></i>Database Backup</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                        <div class="text-muted">
+                            Download a backup copy of the current SQLite database.
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#restoreDbModal">
+                                <i class="fas fa-upload me-1"></i> Restore
+                            </button>
+                            <a href="http://192.168.11.143:8001/admin/settings/backup-database" class="btn btn-outline-primary" onclick="var btn=this; var original=btn.innerHTML; btn.innerHTML='<i class=\'fas fa-spinner fa-spin me-1\'></i> Processing...'; btn.style.pointerEvents='none'; setTimeout(function(){ btn.innerHTML=original; btn.style.pointerEvents='auto'; }, 5000);">
+                                <i class="fas fa-download me-1"></i> Download Backup
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Restore DB Modal -->
+<div class="modal fade" id="restoreDbModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="http://192.168.11.143:8001/admin/settings/restore-database" method="POST" enctype="multipart/form-data" onsubmit="return confirm('CRITICAL WARNING: This will OVERWRITE the entire database with the uploaded file. Current data will be lost. Are you sure?');">
+                <input type="hidden" name="_token" value="GQmoYGuzJRL6yZg0A2c4WA4XUHhMYIZKBWE41mAf" autocomplete="off">                <div class="modal-header">
+                    <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Restore Database</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger small">
+                        <strong>Warning:</strong> Uploading a database file will replace the current system data.
+                        Ensure the file is a valid <code>.sqlite</code> backup.
+                        <br>
+                        After restore, you may need to <strong>Rebind</strong> the license if the database fingerprint changes.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Backup File (.sqlite or .enc)</label>
+                        <input type="file" name="database_file" class="form-control" accept=".sqlite,.enc" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Restore Database</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Create Admin Form -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white pt-4 px-4">
+                <h5 class="fw-bold mb-0"><i class="fas fa-user-shield me-2 text-primary"></i>Add New Admin</h5>
+            </div>
+            <div class="card-body p-4">
+                <form action="http://192.168.11.143:8001/admin/settings" method="POST">
+                    <input type="hidden" name="_token" value="GQmoYGuzJRL6yZg0A2c4WA4XUHhMYIZKBWE41mAf" autocomplete="off">                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Full Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Email Address</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Password</label>
+                        <input type="password" name="password" class="form-control" required minlength="8">
+                        <div class="form-text small">Min. 8 characters</div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Role</label>
+                        <select name="role" class="form-select">
+                            <option value="admin">Administrator (Full Access)</option>
+                            <option value="editor">Editor (Can Manage Users)</option>
+                            <option value="viewer">Viewer (Read Only)</option>
+                        </select>
+                    </div>
+                                            <!-- Only Super Admin can create Super Admins? Actually, only ONE super admin allowed, so no one can create another super admin -->
+                                        <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus-circle me-1"></i> Create Admin</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin List -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white pt-4 px-4">
+                <h5 class="fw-bold mb-0">Existing Administrators</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 text-muted small border-0 py-3">NAME</th>
+                                <th class="text-muted small border-0 py-3">EMAIL</th>
+                                <th class="text-muted small border-0 py-3">ROLE</th>
+                                <th class="text-muted small border-0 py-3 text-end pe-4">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                                        <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                                                                <div class="avatar me-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                            <i class="fas fa-user-shield text-primary small"></i>
+                                        </div>
+                                        <span class="fw-medium">Admin User</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted">admin@school.edu</td>
+                                <td>
+                                                                            <span class="badge bg-light text-primary border px-3 rounded-pill"><i class="fas fa-user-shield me-1"></i>Admin</span>
+                                                                    </td>
+                                <td class="text-end pe-4">
+                                                                            <button type="button" class="btn btn-sm btn-light border me-1 text-primary js-edit-admin" data-id="2" data-name="Admin User" data-email="admin@school.edu" title="Edit My Profile">
+                                            <i class="fas fa-user-shield"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-light text-primary border me-1 js-pass-admin" data-id="2" data-name="Admin User" title="Change Password">
+                                            <i class="fas fa-key"></i>
+                                        </button>
+                                        <span class="badge bg-light text-muted border">Current</span>
+                                                                    </td>
+                            </tr>
+                                                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Admin Modal -->
+<div class="modal fade" id="editAdminModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editAdminForm" action="" method="POST">
+                <input type="hidden" name="_token" value="GQmoYGuzJRL6yZg0A2c4WA4XUHhMYIZKBWE41mAf" autocomplete="off">                <input type="hidden" name="_method" value="PUT">                <div class="modal-header">
+                    <h5 class="modal-title">Edit Administrator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" id="editAdminName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" id="editAdminEmail" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Password Change Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="passwordForm" action="" method="POST">
+                <input type="hidden" name="_token" value="GQmoYGuzJRL6yZg0A2c4WA4XUHhMYIZKBWE41mAf" autocomplete="off">                <input type="hidden" name="_method" value="PUT">                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Changing password for <strong id="adminName"></strong></p>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="password" class="form-control" required minlength="8">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" name="password_confirmation" class="form-control" required minlength="8">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Define functions on window to ensure global availability
+    // Use a self-executing function to avoid polluting global scope with variables if not needed,
+    // but here we want to attach to window explicitly.
+    (function() {
+        window.openPasswordModal = function(id, name) {
+            let form = document.getElementById('passwordForm');
+            if (!form) return; // Guard clause
+            
+            // Safe URL construction
+            let baseUrl = "http://192.168.11.143:8001/admin/settings";
+            form.action = baseUrl + "/" + id + "/password";
+            
+            let nameSpan = document.getElementById('adminName');
+            if (nameSpan) nameSpan.textContent = name;
+            
+            let modalEl = document.getElementById('passwordModal');
+            if (modalEl) {
+                new bootstrap.Modal(modalEl).show();
+            }
+        };
+        
+        window.openEditModal = function(id, name, email) {
+            let form = document.getElementById('editAdminForm');
+            if (!form) return; // Guard clause
+            
+            let baseUrl = "http://192.168.11.143:8001/admin/settings";
+            form.action = baseUrl + "/" + id;
+            
+            let nameInput = document.getElementById('editAdminName');
+            let emailInput = document.getElementById('editAdminEmail');
+            
+            if (nameInput) nameInput.value = name;
+            if (emailInput) emailInput.value = email;
+            
+            let modalEl = document.getElementById('editAdminModal');
+            if (modalEl) {
+                new bootstrap.Modal(modalEl).show();
+            }
+        };
+    })();
+
+    // Event delegation to ensure handlers work after SPA navigation
+    $(document).on('click', '.js-edit-admin', function() {
+        var $btn = $(this);
+        var id = $btn.data('id');
+        var name = $btn.data('name');
+        var email = $btn.data('email');
+        if (typeof window.openEditModal === 'function') {
+            window.openEditModal(id, name, email);
+        }
+    });
+    $(document).on('click', '.js-pass-admin', function() {
+        var $btn = $(this);
+        var id = $btn.data('id');
+        var name = $btn.data('name');
+        if (typeof window.openPasswordModal === 'function') {
+            window.openPasswordModal(id, name);
+        }
+    });
+
+    // Color Picker Sync Logic
+    $(document).ready(function() {
+        // Sync color input -> text input
+        $('input[type="color"]').on('input change', function() {
+            // Get the ID of the text input (remove _picker suffix)
+            var targetId = $(this).attr('id').replace('_picker', '');
+            $('#' + targetId).val($(this).val());
+        });
+
+        // Sync text input -> color input
+        $('input[type="text"]').on('input keyup', function() {
+            var val = $(this).val();
+            // Basic hex validation
+            if (/^#[0-9A-F]{6}$/i.test(val)) {
+                var pickerId = $(this).attr('id') + '_picker';
+                $('#' + pickerId).val(val);
+            }
+        });
+
+        // Preset Color Click
+        $('.js-color-preset').on('click', function() {
+            var target = $(this).data('target');
+            var color = $(this).data('color');
+            
+            // Update Text Input
+            $('#' + target).val(color);
+            
+            // Update Picker
+            $('#' + target + '_picker').val(color);
+        });
+    });
+</script>
+        </div>
+    </main>
+    
+        
+    <script>
+        // Sidebar Mobile Toggle
+        $(document).ready(function() {
+            $('#sidebar-toggle').on('click', function() {
+                $('.sidebar').addClass('active');
+                // Create overlay
+                if($('.sidebar-overlay').length === 0) {
+                    $('body').append('<div class="sidebar-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;"></div>');
+                }
+            });
+
+            $(document).on('click', '#sidebar-close, .sidebar-overlay', function() {
+                $('.sidebar').removeClass('active');
+                $('.sidebar-overlay').remove();
+            });
+        });
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': 'GQmoYGuzJRL6yZg0A2c4WA4XUHhMYIZKBWE41mAf'
+            }
+        });
+
+        // Global SPA Loader Function
+        window.loadSpaPage = function(url) {
+            // Visual feedback
+            // $('#spa-content').css('opacity', '0.5'); // Removed for instant feel
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                headers: {
+                    'X-SPA-REQUEST': 'true'
+                },
+                success: function(response) {
+                    let doc = new DOMParser().parseFromString(response, 'text/html');
+                    let newContentWrapper = doc.getElementById('spa-content');
+                    let newContent = newContentWrapper.innerHTML;
+                    
+                    $('#spa-content').html(newContent);
+                    $('#spa-content').css('opacity', '1');
+                    $('body').removeClass('modal-open').css('overflow', 'auto');
+                    $('.modal-backdrop').remove();
+                    
+                    // Execute scripts found in the new content
+                    // IMPORTANT: We need to manually re-instantiate charts if any
+                    // The standard $.globalEval might execute the code, but ApexCharts needs the DOM to be ready
+                    let scripts = newContentWrapper.getElementsByTagName("script");
+                    for(let i=0; i<scripts.length; i++) {
+                        if (scripts[i].src) {
+                            // Load external scripts (like ApexCharts) if not already loaded
+                            if (!$('script[src="' + scripts[i].src + '"]').length) {
+                                $.getScript(scripts[i].src, function() {
+                                    // Callback if needed
+                                });
+                            }
+                        } else {
+                            // Execute inline scripts
+                            try {
+                                // Execute immediately via window.eval to ensure global scope
+                                // This is more reliable than $.globalEval for function definitions
+                                window.eval(scripts[i].innerText);
+                            } catch(e) {
+                                console.error("SPA Script Error:", e);
+                            }
+                        }
+                    }
+                    
+                    window.history.pushState({path: url}, '', url);
+                    
+                    // Update active sidebar state
+                    $('.sidebar-link').removeClass('active');
+                    $('.sidebar-link[href="' + url + '"]').addClass('active');
+                },
+                error: function() {
+                    window.location.href = url;
+                }
+            });
+        };
+
+        // Sidebar Click Handler
+        $(document).on('click', '.sidebar-link', function(e) {
+            let url = $(this).attr('href');
+            if (url === '#' || $(this).closest('form').length > 0) return;
+            // Force full page load for Settings to ensure scripts and modals initialize cleanly
+            if (url.indexOf('/admin/settings') !== -1) {
+                return; // allow default navigation
+            }
+            e.preventDefault();
+            loadSpaPage(url);
+        });
+
+        // Handle Back/Forward buttons
+        window.onpopstate = function(e) {
+            if(e.state) {
+                // We can reuse loadSpaPage but without pushState
+                // For simplicity, just reload or basic fetch
+                 $.ajax({
+                    url: window.location.href,
+                    headers: {'X-SPA-REQUEST': 'true'},
+                    success: function(response) {
+                        let doc = new DOMParser().parseFromString(response, 'text/html');
+                        $('#spa-content').html(doc.getElementById('spa-content').innerHTML);
+                    }
+                 });
+            } else {
+                window.location.reload();
+            }
+        };
+        
+        window.openPasswordModal = function(id, name) {
+            var form = document.getElementById('passwordForm');
+            if (!form) return;
+            var baseUrl = "http://192.168.11.143:8001/admin/settings";
+            form.action = baseUrl + "/" + id + "/password";
+            var nameSpan = document.getElementById('adminName');
+            if (nameSpan) nameSpan.textContent = name;
+            var modalEl = document.getElementById('passwordModal');
+            if (modalEl) new bootstrap.Modal(modalEl).show();
+        };
+        window.openEditModal = function(id, name, email) {
+            var form = document.getElementById('editAdminForm');
+            if (!form) return;
+            var baseUrl = "http://192.168.11.143:8001/admin/settings";
+            form.action = baseUrl + "/" + id;
+            var nameInput = document.getElementById('editAdminName');
+            var emailInput = document.getElementById('editAdminEmail');
+            if (nameInput) nameInput.value = name;
+            if (emailInput) emailInput.value = email;
+            var modalEl = document.getElementById('editAdminModal');
+            if (modalEl) new bootstrap.Modal(modalEl).show();
+        };
+    </script>
+    </body>
+</html>

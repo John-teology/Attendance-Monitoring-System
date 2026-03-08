@@ -43,7 +43,7 @@
                      },
     "web_server":  {
                        "listen_on":  [
-                                         "192.168.8.194",
+                                         "192.168.11.143",
                                          8001
                                      ],
                        "www_directory":  "www/public",
